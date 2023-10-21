@@ -14,8 +14,9 @@ import (
 
 type App struct {
 	*echo.Echo
-	Log *slog.Logger
-	cfg *config.Config
+	Log     *slog.Logger
+	cfg     *config.Config
+	handler *todo.Handler
 }
 
 func InitApp() (*App, error) {

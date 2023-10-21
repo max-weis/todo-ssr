@@ -9,8 +9,10 @@ package main
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/max-weis/todo-ssr/internal/config"
+	"github.com/max-weis/todo-ssr/internal/database"
 	"github.com/max-weis/todo-ssr/internal/http"
 	"github.com/max-weis/todo-ssr/internal/logger"
+	"github.com/max-weis/todo-ssr/pkg/todo"
 	"log/slog"
 )
 
@@ -20,10 +22,21 @@ func InitApp() (*App, error) {
 	configConfig := config.NewConfig()
 	slogLogger := logger.NewLogger(configConfig)
 	echo := http.NewEcho(configConfig, slogLogger)
+	db, err := database.NewDatabase()
+	if err != nil {
+		return nil, err
+	}
+	repository := todo.NewSqliteRepository(db)
+	controller := todo.NewController(repository)
+	handler, err := todo.NewHandler(slogLogger, controller, echo)
+	if err != nil {
+		return nil, err
+	}
 	app := &App{
-		Echo: echo,
-		Log:  slogLogger,
-		cfg:  configConfig,
+		Echo:    echo,
+		Log:     slogLogger,
+		cfg:     configConfig,
+		handler: handler,
 	}
 	return app, nil
 }
@@ -32,6 +45,7 @@ func InitApp() (*App, error) {
 
 type App struct {
 	*echo.Echo
-	Log *slog.Logger
-	cfg *config.Config
+	Log     *slog.Logger
+	cfg     *config.Config
+	handler *todo.Handler
 }

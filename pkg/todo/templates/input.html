@@ -1,0 +1,6 @@
+{{define "input"}}
+<form hx-post="/todo" hx-swap="outerHTML" hx-target="#todo-list">
+    <input type="text" name="todo" placeholder="New ToDo">
+    <button type="submit">Add</button>
+</form>
+{{end}}

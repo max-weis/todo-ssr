@@ -1,0 +1,12 @@
+{{define "list"}}
+<div id="todo-list">
+    {{range .Todos}}
+    <div>
+        <input type="checkbox" {{if .Done}}checked{{end}}
+               hx-patch="/todo"
+               hx-vals='{"text": "{{.Text}}", "done": {{not .Done}}}'>
+        <span>{{.Text}}</span>
+    </div>
+    {{end}}
+</div>
+{{end}}
