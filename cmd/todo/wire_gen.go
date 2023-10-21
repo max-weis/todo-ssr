@@ -27,7 +27,7 @@ func InitApp() (*App, error) {
 		return nil, err
 	}
 	repository := todo.NewSqliteRepository(db)
-	controller := todo.NewController(repository)
+	controller := todo.NewController(slogLogger, repository)
 	handler, err := todo.NewHandler(slogLogger, controller, echo)
 	if err != nil {
 		return nil, err

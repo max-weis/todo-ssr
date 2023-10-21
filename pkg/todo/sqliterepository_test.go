@@ -25,10 +25,6 @@ func (suite *SQLiteRepositoryTestSuite) SetupTest() {
 	err = database.Migrate(db)
 	suite.NoError(err)
 
-	db.MustExec("INSERT INTO todos (text, done) VALUES ('clean kitchen', false); " +
-		"INSERT INTO todos (text, done) VALUES ('clean bathroom', true); " +
-		"INSERT INTO todos (text, done) VALUES ('clean bedroom', false);")
-
 	suite.db = db
 	suite.repository = todo.NewSqliteRepository(db)
 	suite.ctx = context.Background()
@@ -36,8 +32,8 @@ func (suite *SQLiteRepositoryTestSuite) SetupTest() {
 
 func (suite *SQLiteRepositoryTestSuite) TestRepository_Save() {
 	err := suite.repository.Save(suite.ctx, todo.Todo{
-		Text: "clean kitchen",
-		Done: false,
+		Text: "learn Go",
+		Done: true,
 	})
 
 	suite.NoError(err)
@@ -55,12 +51,12 @@ func (suite *SQLiteRepositoryTestSuite) TestRepository_List() {
 
 func (suite *SQLiteRepositoryTestSuite) TestRepository_Update() {
 	oldTodo := todo.Todo{
-		Text: "clean kitchen",
+		Text: "read book",
 		Done: false,
 	}
 
 	newTodo := todo.Todo{
-		Text: "clean kitchen",
+		Text: "read book",
 		Done: true,
 	}
 
@@ -68,7 +64,7 @@ func (suite *SQLiteRepositoryTestSuite) TestRepository_Update() {
 	suite.NoError(err)
 
 	var updatedDone bool
-	err = suite.db.Get(&updatedDone, "SELECT done FROM todos WHERE text = 'clean kitchen' LIMIT 1")
+	err = suite.db.Get(&updatedDone, "SELECT done FROM todos WHERE text = 'read book' LIMIT 1")
 	suite.NoError(err)
 
 	suite.True(updatedDone)

@@ -7,6 +7,8 @@ import (
 	"github.com/max-weis/todo-ssr/pkg/todo"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
+	"log/slog"
+	"os"
 	"testing"
 )
 
@@ -24,7 +26,7 @@ func (suite *ControllerTestSuite) SetupTest() {
 	repository.On("Update", mock.Anything, mock.Anything, mock.Anything).Return(nil)
 
 	suite.repository = repository
-	suite.controller = todo.NewController(repository)
+	suite.controller = todo.NewController(slog.New(slog.NewTextHandler(os.Stdout, nil)), repository)
 	suite.ctx = context.Background()
 }
 
