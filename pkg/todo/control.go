@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 )
 
 var (
@@ -34,6 +35,7 @@ type (
 
 	// Controller provides todo-related operations.
 	Controller struct {
+		logger     *slog.Logger
 		Repository Repository
 	}
 
@@ -49,34 +51,59 @@ type (
 )
 
 // NewController creates a new todo controller.
-func NewController(repo Repository) Controller {
-	return Controller{Repository: repo}
+func NewController(logger *slog.Logger, repo Repository) Controller {
+	return Controller{logger: logger, Repository: repo}
 }
 
 // CreateNewTodo creates a new todo item.
 func (c *Controller) CreateNewTodo(ctx context.Context, todo Todo) error {
 	if err := validateTodo(todo); err != nil {
+		c.logger.Error("failed to validate todo", slog.String("text", todo.Text), slog.String("error", err.Error()))
 		return err
 	}
-	return c.Repository.Save(ctx, todo)
+	if err := c.Repository.Save(ctx, todo); err != nil {
+		c.logger.Error("failed to save todo", slog.String("text", todo.Text), slog.String("error", err.Error()))
+		return err
+	}
+
+	c.logger.Info("todo saved", slog.String("text", todo.Text))
+
+	return nil
 }
 
 // ListTodos returns a list of todo items.
 func (c *Controller) ListTodos(ctx context.Context, page Page) ([]Todo, error) {
-	return c.Repository.List(ctx, page)
+	todos, err := c.Repository.List(ctx, page)
+	if err != nil {
+		c.logger.Error("failed to list todos", slog.String("error", err.Error()))
+		return nil, err
+	}
+
+	c.logger.Info("todos listed", slog.Int("count", len(todos)))
+
+	return todos, nil
 }
 
 // UpdateTodo updates a todo item.
 func (c *Controller) UpdateTodo(ctx context.Context, old, new Todo) error {
 	if old == new {
+		c.logger.Info("todo not updated", slog.String("text", old.Text))
 		return nil
 	}
 
 	if err := validateTodo(new); err != nil {
+		c.logger.Error("failed to validate todo", slog.String("text", old.Text), slog.String("error", err.Error()))
 		return err
 	}
 
-	return c.Repository.Update(ctx, old, new)
+	if err := c.Repository.Update(ctx, old, new); err != nil {
+		c.logger.Error("failed to update todo", slog.String("text", old.Text), slog.String("error", err.Error()))
+		return err
+	}
+
+	c.logger.Info("todo updated", slog.String("text", old.Text))
+
+	return nil
 }
 
 // validateTodo validates a todo item.
