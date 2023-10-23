@@ -13,7 +13,7 @@ type Config struct {
 func NewConfig() *Config {
 	return &Config{
 		Production: getEnvVarWithDefault("APP_PROD", "false") == "true",
-		Port:       getEnvVarWithDefault("WEBSITES_PORT", "8080"),
+		Port:       getEnvVarWithDefault("PORT", "8080"),
 	}
 }
 
