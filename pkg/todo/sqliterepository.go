@@ -28,11 +28,11 @@ func (s sqliteRepository) Save(ctx context.Context, todo Todo) error {
 	return err
 }
 
-func (s sqliteRepository) List(ctx context.Context, page Page) ([]Todo, error) {
-	const query = `SELECT text, done FROM todos LIMIT :limit OFFSET :offset`
+func (s sqliteRepository) List(ctx context.Context) ([]Todo, error) {
+	const query = `SELECT text, done FROM todos`
 
-	entities := make([]todoEntity, page.Limit)
-	if err := s.db.SelectContext(ctx, &entities, query, page.Limit, page.Offset); err != nil {
+	var entities []todoEntity
+	if err := s.db.SelectContext(ctx, &entities, query); err != nil {
 		return nil, err
 	}
 

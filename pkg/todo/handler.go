@@ -56,10 +56,7 @@ func (h *Handler) Render(w io.Writer, name string, data interface{}, c echo.Cont
 
 // Index creates the homepage of the application. It lists all the todos.
 func (h *Handler) Index(c echo.Context) error {
-	todos, err := h.controller.ListTodos(c.Request().Context(), Page{
-		Limit:  10,
-		Offset: 0,
-	})
+	todos, err := h.controller.ListTodos(c.Request().Context())
 	if err != nil {
 		return err
 	}
@@ -80,10 +77,7 @@ func (h *Handler) Add(c echo.Context) error {
 		return err
 	}
 
-	todos, err := h.controller.ListTodos(c.Request().Context(), Page{
-		Limit:  10,
-		Offset: 0,
-	})
+	todos, err := h.controller.ListTodos(c.Request().Context())
 	if err != nil {
 		return err
 	}

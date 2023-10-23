@@ -14,7 +14,7 @@ var (
 	ErrTextTooLong = fmt.Errorf("%w: text must be less than 256 characters", ValidationError)
 )
 
-const MAX_TEXT int = 256
+const MaxText int = 256
 
 type (
 	// Todo describes a todo item.
@@ -23,14 +23,6 @@ type (
 		Text string
 		// Done indicates whether the todo item is done.
 		Done bool
-	}
-
-	// Page is used to paginate todo items.
-	Page struct {
-		// Limit is the maximum number of todo items to return.
-		Limit int
-		// Offset is the number of todo items to skip.
-		Offset int
 	}
 
 	// Controller provides todo-related operations.
@@ -44,7 +36,7 @@ type (
 		// Save persists a todo item.
 		Save(ctx context.Context, todo Todo) error
 		// List returns a list of todo items.
-		List(ctx context.Context, page Page) ([]Todo, error)
+		List(ctx context.Context) ([]Todo, error)
 		// Update updates a todo item.
 		Update(ctx context.Context, old, new Todo) error
 	}
@@ -72,8 +64,8 @@ func (c *Controller) CreateNewTodo(ctx context.Context, todo Todo) error {
 }
 
 // ListTodos returns a list of todo items.
-func (c *Controller) ListTodos(ctx context.Context, page Page) ([]Todo, error) {
-	todos, err := c.Repository.List(ctx, page)
+func (c *Controller) ListTodos(ctx context.Context) ([]Todo, error) {
+	todos, err := c.Repository.List(ctx)
 	if err != nil {
 		c.logger.Error("failed to list todos", slog.String("error", err.Error()))
 		return nil, err
@@ -112,7 +104,7 @@ func validateTodo(todo Todo) error {
 		return ErrNoText
 	}
 
-	if len(todo.Text) > MAX_TEXT {
+	if len(todo.Text) > MaxText {
 		return ErrTextTooLong
 	}
 

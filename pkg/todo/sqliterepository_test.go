@@ -40,10 +40,7 @@ func (suite *SQLiteRepositoryTestSuite) TestRepository_Save() {
 }
 
 func (suite *SQLiteRepositoryTestSuite) TestRepository_List() {
-	todos, err := suite.repository.List(suite.ctx, todo.Page{
-		Limit:  10,
-		Offset: 0,
-	})
+	todos, err := suite.repository.List(suite.ctx)
 
 	suite.Len(todos, 3)
 	suite.NoError(err)

@@ -50,7 +50,7 @@ func (suite *ControllerTestSuite) TestController_CreateNewTodo_NoText() {
 
 func (suite *ControllerTestSuite) TestController_CreateNewTodo_TextTooLong() {
 	err := suite.controller.CreateNewTodo(suite.ctx, todo.Todo{
-		Text: generateTextBySize(todo.MAX_TEXT + 1),
+		Text: generateTextBySize(todo.MaxText + 1),
 		Done: false,
 	})
 
@@ -58,10 +58,7 @@ func (suite *ControllerTestSuite) TestController_CreateNewTodo_TextTooLong() {
 }
 
 func (suite *ControllerTestSuite) TestController_ListTodos() {
-	todos, err := suite.controller.ListTodos(suite.ctx, todo.Page{
-		Limit:  10,
-		Offset: 0,
-	})
+	todos, err := suite.controller.ListTodos(suite.ctx)
 
 	suite.Len(todos, 1)
 	suite.NoError(err)
@@ -110,7 +107,7 @@ func (suite *ControllerTestSuite) TestController_UpdateTodo_TextTooLong() {
 		Done: false,
 	}
 	newTodo := todo.Todo{
-		Text: generateTextBySize(todo.MAX_TEXT + 1),
+		Text: generateTextBySize(todo.MaxText + 1),
 		Done: false,
 	}
 
